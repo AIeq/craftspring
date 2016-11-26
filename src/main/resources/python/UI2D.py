@@ -97,7 +97,7 @@ class Minion():
            
      
 def main():
-    win = GraphWin('game', 400, 600) # give title and dimensions
+    win = GraphWin('game', 380, 640) # give title and dimensions
     #win.yUp() # make right side up coordinates!
 
     #head = Circle(Point(40,100), 25) # set center and radius
@@ -120,6 +120,11 @@ def main():
       Minion( 3, random.randint(26, 125), random.randint(56, 265),win),
       Minion( 4, random.randint(26, 125), random.randint(56, 265),win),
       Minion( 5, random.randint(26, 125), random.randint(56, 265),win),
+      Minion( 6, random.randint(56, 125), random.randint(56, 265),win),
+      Minion( 7, random.randint(26, 125), random.randint(56, 265),win),
+      Minion( 8, random.randint(26, 125), random.randint(56, 265),win),
+      Minion( 9, random.randint(26, 125), random.randint(56, 265),win),
+      Minion( 10, random.randint(26, 125), random.randint(56, 265),win),
     ]
     while(True):
       for m in minions:
@@ -143,7 +148,9 @@ def main():
       print("----")
       #head = Circle(win.getMouse(), 5) # set center and radius
       #head.setFill("yellow")
-      #head.draw(win)
+      #head.draw(win) 
+      win.flush() 
     win.close()
+    
 
 main()
