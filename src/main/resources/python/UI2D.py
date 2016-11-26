@@ -1,16 +1,18 @@
 '''A simple ui
 '''
 
+from AI import Ai
 from graphics import *
 import random
 import time
 import math
+import json
 level = [["gray", "gray", "gray", "gray", "gray", "gray"],
  ["gray", "white", "white", "white", "white", "gray"],
  ["gray", "white", "white", "white", "white", "gray"],
- ["gray", "white", "white", "gray", "white", "gray"],
+ ["red", "red", "red", "red", "red", "red"],
  ["gray", "white", "gray", "white", "white", "gray"],
- ["gray", "white", "white", "gray", "white", "gray"],
+ ["blue", "red", "red", "red", "red", "blue"],
  ["gray", "gray", "white", "white", "gray", "gray"],
  ["gray", "white", "gray", "white", "white", "gray"],
  ["gray", "white", "white", "white", "gray", "gray"],
@@ -20,9 +22,9 @@ level = [["gray", "gray", "gray", "gray", "gray", "gray"],
  ["gray", "gray", "white", "white", "white", "gray"],
  ["gray", "gray", "gray", "gray", "gray", "gray"]
 ]
-
+ai = Ai()
 class Minion():  
-  def __init__(self, i, x,y, win): #
+  def __init__(self, i,p, x,y, win): #
         self.i = i;
         self.x = x;
         self.y = y;
@@ -30,8 +32,10 @@ class Minion():
         self.oldy = y;
         self.dx = 0;
         self.dy = 0;
-        self.color = "yellow";
-         
+        #print(p)
+        #self.color = json.loads(p).get("color");
+        self.color = p
+        
         p = Point(self.x, self.y)
         self.body = Circle(p, 20) # set center and radius
         self.body.setFill(self.color) 
@@ -45,7 +49,7 @@ class Minion():
         self.head.setFill(self.color) 
         self.head.draw(win)
         
-        self.angle = random.randint( 0, 10);
+        self.angle = random.randint( 0, 7)  * math.pi * 2 /8
         self.size = 15
         hx = self.size * math.cos(self.angle)
         hy = self.size * math.sin(self.angle)
@@ -84,8 +88,8 @@ class Minion():
   def collision(self, other):
         c =  math.hypot(other.x - self.x, other.y - self.y) < self.size + other.size
         if c:
-          self.dx = (self.x - other.x)/2
-          self.dy = (self.y - other.y)/2
+          self.dx = (self.x - other.x)/4
+          self.dy = (self.y - other.y)/4
           return True
         if self.x < 80:
           self.dx = 80- self.x
@@ -104,6 +108,23 @@ class Minion():
         self.moveXY(self.dx,self.dy)
         self.dx = 0;
         self.dy = 0;
+  def sees(self):
+        vx = self.x+2*self.size * math.cos(self.angle)
+        vy = self.y+2*self.size * math.sin(self.angle)
+        i =  int((vx-60) / 40) 
+        j =  int((vy-40) / 40)
+        if  i < 0:
+            return "none"
+        if  j < 0:
+            return "none"
+        if  i > 5 :
+            return "none"
+        if j > 13:
+            return "none"
+        s = level[j][i]
+        if s== "gray":
+          s = "none" 
+        return s;
            
      
 def main():
@@ -124,27 +145,35 @@ def main():
           box = Rectangle(Point(xx, yy), Point(xx+40, yy+40)) # set corners of  
           box.setFill(c)
           box.draw(win)
-    minions = [
-      Minion( 1, random.randint(56, 125), random.randint(56, 265),win),
-      Minion( 2, random.randint(26, 125), random.randint(56, 265),win),
-      Minion( 3, random.randint(26, 125), random.randint(56, 265),win),
-      Minion( 4, random.randint(26, 125), random.randint(56, 265),win),
-      Minion( 5, random.randint(26, 125), random.randint(56, 265),win),
-      Minion( 6, random.randint(56, 125), random.randint(56, 265),win),
-      Minion( 7, random.randint(26, 125), random.randint(56, 265),win),
-      Minion( 8, random.randint(26, 125), random.randint(56, 265),win),
-      Minion( 9, random.randint(26, 125), random.randint(56, 265),win),
-      Minion( 10, random.randint(26, 125), random.randint(56, 265),win),
-    ]
+    props = ai.make(10)
+    #print(str(props))
+    minions = []
+    for i, p in enumerate(props):
+      minions.append(Minion( i ,p, random.randint(56, 250), random.randint(500, 600),win)) 
+     
     while(True):
+      sees =[]
       for m in minions:
-        # if ai move is left then move = 1;
-        move =  random.randint(-1, 1)
-        m.turn(move);
-        m.move()
+        sees.append(m.sees())
+
+      #print(str(sees))
+      actions = ai.see(sees)
+      for m , act in zip(minions, actions):
+        direction = 0
+        if act == "left":
+            direction = 1
+        if act == "right":
+            direction = -1
+        
+        #move =  random.randint(-1, 1)
+        m.turn(direction);
+        if direction == 0:
+          m.move()
       collision = True
-      while collision:
+      tries = 0;
+      while collision and tries < 10000: 
         collision = False
+        tries += 1
         for m in minions: 
           for t in minions:
             if m is not t:
@@ -158,7 +187,7 @@ def main():
       for m in minions:
         m.update()
       time.sleep(.2)
-      print("----")
+      #print("----")
       #head = Circle(win.getMouse(), 5) # set center and radius
       #head.setFill("yellow")
       #head.draw(win) 

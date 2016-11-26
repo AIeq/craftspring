@@ -58,9 +58,9 @@ class Ai:
     self.parents = None
     return result 
   def see(self, args):
-    result = ""
+    result = []
     for a, c in zip(args, self.creatures): 
-      result = result + " " + c.move(a)
+      result.append( c.move(a))
     
     return result
   def breed(self, i,j):
@@ -82,9 +82,9 @@ class Ai:
           running = False;
         elif command == "make": 
           #self.output("properties [" + ", ".join (json.dumps(self.make(int(args[0])))) + "]")
-          self.output("properties  " + "  ".join ( self.make(int(args[0]) )) + " ")
+          self.output("properties  " + " ".join ( self.make(int(args[0]) )) + " ")
         elif   command == "see":
-          self.output("move" + self.see(args))
+          self.output("move" + "  ".join ( self.see(args)))
         elif command == "breed":
           self.breed( int(args[0])  ,  int(args[1]) );
           
