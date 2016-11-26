@@ -42,7 +42,7 @@ class Ai:
   
   def make(self, n):
     self.creatures = [] 
-    result = ""
+    result = []
     for i in range(n):
       if self.parents is not None and i == 0:
         g = self.parents[0]
@@ -53,7 +53,7 @@ class Ai:
         g.mutate()
       c = Creature(g) 
       self.creatures.append(c)  
-      result = result + " " + c.properties()
+      result.append( c.properties())
     self.parents = None
     return result 
   def see(self, args):
@@ -80,7 +80,7 @@ class Ai:
         if command == "exit":
           running = False;
         elif command == "make": 
-          self.output("properties" + self.make(int(args[0])))
+          self.output("properties [" + ", ".join (self.make(int(args[0]))) + "]")
         elif   command == "see":
           self.output("move" + self.see(args))
         elif command == "breed":
