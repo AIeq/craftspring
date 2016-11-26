@@ -1,12 +1,15 @@
  
 from Genome import DummyGenome
+from ListGenome import ListGenome
 
-genomeType = "dummy"
+genomeType = "list"
 def genomeFactory(parents):
   if genomeType is "dummy":
     return DummyGenome(parents);
   elif genomeType is "map":
     return MapGenome(parents);
+  elif genomeType is "list":
+    return ListGenome(parents);
 
 # Defining a class
 class Creature:
@@ -14,7 +17,7 @@ class Creature:
         self.genome = genome
         
   def __repr__(self):
-    return "Creature[" + str(self.genome)+"]" 
+    return "Creature" + str(self.genome) 
     
   def move(self, input):     
     return self.genome.getMove(input)
