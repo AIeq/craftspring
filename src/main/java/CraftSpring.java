@@ -1,4 +1,8 @@
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelSilverfish;
+import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderSilverfish;
+import net.minecraft.client.renderer.entity.RenderWolf;
 import net.minecraft.command.ICommand;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,6 +38,7 @@ public class CraftSpring {
     	commandHandler=new	CraftSpringCommand();
     	
         ClientCommandHandler.instance.registerCommand(commandHandler);
+        registerMinions();
     }
     
     @Mod.EventHandler
@@ -43,9 +48,12 @@ public class CraftSpring {
     
     protected	void	registerMinions()
     {
-    	EntityRegistry.registerModEntity(EntityMinion.class, "Minion", 0,
-    			CraftSpring.instance, 48, 55, true, 0xFF0000, 0x00FF00);
+    	EntityRegistry.registerModEntity(EntityMinion.class, "Minion", 0, 
+    			CraftSpring.instance, 64, 3, true,0xFF0000,0x00FF00);
+//    	new	RenderWolf(Minecraft.getMinecraft().getRenderManager(), null, 0);
     	RenderingRegistry.registerEntityRenderingHandler(EntityMinion.class, 
-    			new	RenderSilverfish(null));
+    			new	RenderWolf(Minecraft.getMinecraft().getRenderManager(), new	ModelSilverfish(), 0.75F));
+//    	RenderingRegistry.registerEntityRenderingHandler(EntityMinion.class, 
+//    			new	RenderLiving(new	ModelSilverfish(),0.75F));
     }
 }
