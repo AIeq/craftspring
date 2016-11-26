@@ -6,7 +6,7 @@ class Genome:
     return "forward";
     
   def getPhysicalProperties(self):
-    return [color: "black", speed:1, health: 1, damage: 1, lifetime: 20];
+    return {"color": "black", "speed":1, "health": 1, "damage": 1, "lifetime": 20};
     
   def __repr__(self):
     return str(self.genes)
