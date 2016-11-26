@@ -43,6 +43,7 @@ public class PythonService {
 					@Override
 					public void run() {
 						shutdown=false;
+						preparePythonScript("ListGenome.py");
 						preparePythonScript("Genome.py");
 						File	pyFile=preparePythonScript("AI.py");
 
