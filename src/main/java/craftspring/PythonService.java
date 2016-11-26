@@ -10,12 +10,11 @@ import java.util.concurrent.TimeUnit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.vrogojin.sixthsense.config.SixthSenseConfig;
-import net.vrogojin.sixthsense.sensors.blocks.ChunkScanner;
 
 public class PythonService {
 	
 	protected	static	ExecutorService	tasksExecutor=null;
+	protected	static	Process py = null;
 	protected	static	boolean	shutdown=false;
 	
 	protected	static	LinkedList<String>	queue;
@@ -32,6 +31,7 @@ public class PythonService {
 					@Override
 					public void run() {
 						shutdown=false;
+						py = Runtime.getRuntime().exec("cmd /c dir");
 						runUpdateCycle();
 					}
 			
@@ -65,6 +65,8 @@ public class PythonService {
 	{
 		int	t1=0;
 		int	t2=0;
+		String	command="";
+		int	i=0;
 		while(!shutdown){
 			
 			while(queueNonEmpty()){
@@ -72,56 +74,21 @@ public class PythonService {
 				synchronized(queue){
 					command=queue.removeFirst();
 				}
-				if(scanner!=null)
-				{
-					if(scanner.isLoaded()){
-						boolean	changed1=scanner.update();
-						changed=changed||changed1;
-						i=0;
-						removeDue(scanner);
-					}
-					else{
-						if(isDue(scanner)){
-							boolean	changed1=scanner.update();
-							changed=changed||changed1;
-							if(scanner.chunk.getChunkCoordIntPair().getDistanceSq(Minecraft.getMinecraft().thePlayer)>160)								
-								removeDue(scanner);
-							else
-								synchronized(queue){
-									queue.add(scanner);
-									setDue(scanner);
-								}
-//							System.out.println("IS DUE!!!");
-						}
-						else
-						{
-							synchronized(queue){
-								queue.add(scanner);
-							}
-							if(notSet(scanner))
-								setDue(scanner);
-						}
-					}
-				}
+				
 //				System.out.println("P2");
 				if(shutdown)
 					break;
 //				System.out.println("P3");
 				if(i>queue.size())
-						break;
+					break;
 				i++;
-			}
-			if(changed)
-			{
-				System.out.println("CHANGED!!!");
-				SixthSenseConfig.instance.saveBlocks(Minecraft.getMinecraft().theWorld.provider.getDimension());
 			}
 			i=0;
 			while(!shutdown&&(i<15))
 					try {
 						i++;
 						Thread.currentThread();
-						Thread.sleep(1000);
+						Thread.sleep(55);
 //						System.out.println("P4");
 					} catch (InterruptedException e) {
 				// 	TODO Auto-generated catch block
