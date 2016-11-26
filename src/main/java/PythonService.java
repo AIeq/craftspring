@@ -36,16 +36,18 @@ public class PythonService {
 		queue=new	LinkedList<String>();
 		if(tasksExecutor!=null)
 			shutdown();
-		tasksExecutor=Executors.newFixedThreadPool(2);
+		tasksExecutor=Executors.newFixedThreadPool(3);
 		tasksExecutor.execute(new	Runnable(){
 
 					@Override
 					public void run() {
 						shutdown=false;
-						getPythonFile("Genome.py");
-						File	pyFile=getPythonFile("AI.py");
-						if(pyFile==null)
+						preparePythonScript("Genome.py");
+						File	pyFile=preparePythonScript("AI.py");
+						if(pyFile==null){
+							System.out.println("NO PYTHON SCRIPT!!!");
 							return;
+						}
 						try {
 							py = Runtime.getRuntime().exec("python3 "+pyFile.getAbsolutePath());
 						} catch (IOException e) {
@@ -58,6 +60,15 @@ public class PythonService {
 							public void run() {
 								// TODO Auto-generated method stub
 								runSender(py);
+							}
+							
+						});
+						tasksExecutor.execute(new	Runnable(){
+
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								runErrorListener(py);
 							}
 							
 						});
@@ -165,12 +176,39 @@ public class PythonService {
 	{
 		BufferedReader in = new BufferedReader
 		        (new InputStreamReader(py.getInputStream()));
+		
 		int	i=0;
 		while(!shutdown){
 			String line=null;
 			try {
 				while((line = in.readLine())!=null){
 					interpret(line);
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			Thread.currentThread();
+			try {
+				Thread.sleep(55);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static	void	runErrorListener(Process	py)
+	{
+		BufferedReader in = new BufferedReader
+		        (new InputStreamReader(py.getErrorStream()));
+		
+		int	i=0;
+		while(!shutdown){
+			String line=null;
+			try {
+				while((line = in.readLine())!=null){
+					interpretError(line);
 				}
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -293,6 +331,11 @@ public class PythonService {
 	protected	static	void	interpret(String	line)
 	{
 		displayToChat("\247a"+line);
+	}
+	
+	protected	static	void	interpretError(String	line)
+	{
+		displayToChat("\247c"+line);
 	}
 	
 	public	static	void	displayToChat(String	msg)
