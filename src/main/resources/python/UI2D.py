@@ -26,6 +26,8 @@ class Minion():
         self.i = i;
         self.x = x;
         self.y = y;
+        self.oldx = x;
+        self.oldy = y;
         self.dx = 0;
         self.dy = 0;
         self.color = "yellow";
@@ -52,9 +54,17 @@ class Minion():
   def moveXY(self,x,y):  
         self.x +=x
         self.y +=y
+
+  def update(self):
+        x = self.x-self.oldx
+        y = self.y-self.oldy
         self.body.move(x, y)
         self.head.move( x, y)
         self.label.move( x, y)
+
+        self.oldx = self.x;
+        self.oldy = self.y;
+        
   def move(self):  
         x = 2*self.size * math.cos(self.angle)
         y = 2*self.size * math.sin(self.angle)
@@ -144,6 +154,9 @@ def main():
                 collision = True
         for m in minions: 
           m.allign()
+
+      for m in minions:
+        m.update()
       time.sleep(.2)
       print("----")
       #head = Circle(win.getMouse(), 5) # set center and radius

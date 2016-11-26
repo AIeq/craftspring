@@ -27,6 +27,7 @@ public class PythonService {
 	protected	static	ExecutorService	tasksExecutor=null;
 	protected	static	Process py = null;
 	protected	static	boolean	shutdown=false;
+	protected   static  String interpreter = "C:\\Users\\Allu\\AppData\\Local\\Programs\\Python\\Python35-32\\python.exe " ;//"python3 "
 	
 	protected	static	LinkedList<String>	queue;
 	
@@ -42,12 +43,12 @@ public class PythonService {
 					@Override
 					public void run() {
 						shutdown=false;
-						getPythonFile("Genome.py");
-						File	pyFile=getPythonFile("AI.py");
+						preparePythonScript("Genome.py");
+						File	pyFile=preparePythonScript("AI.py");
 						if(pyFile==null)
 							return;
 						try {
-							py = Runtime.getRuntime().exec("python3 "+pyFile.getAbsolutePath());
+							py = Runtime.getRuntime().exec(interpreter+pyFile.getAbsolutePath());
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
