@@ -11,6 +11,9 @@ class Genome:
   def __repr__(self):
     raise NotImplementedError( "Should have implemented this" )
     
+    
+    
+    
 class DummyGenome(Genome):  
   def __init__(self, parents = None): #[Genome, Genome]
         self.genes = None

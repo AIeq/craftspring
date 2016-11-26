@@ -44,9 +44,9 @@ class Ai:
     self.creatures = [] 
     result = ""
     for i in range(n):
-      if self.parents is not None and i = 0:
+      if self.parents is not None and i == 0:
         g = self.parents[0]
-      elif self.parents is not None and i = 1:
+      elif self.parents is not None and i == 1:
         g = self.parents[1]
       else:
         g = genomeFactory(self.parents)
