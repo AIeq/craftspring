@@ -42,8 +42,9 @@ class ListGenome(Genome):
     return "black";
     
   def getPhysicalProperties(self):
-    return {"color": self.findColor(), "speed":1, "health": 1, "damage": 1, "lifetime": 20};
-     
+    #return {"color": self.findColor(), "speed":1, "health": 1, "damage": 1, "lifetime": 20};
+    return self.findColor()
+    
   def mutate(self, propability = 10, hint = None):
     for i, gene in enumerate(self.genes):
       if random.randint(0, 99) < propability:

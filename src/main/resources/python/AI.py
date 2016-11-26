@@ -1,6 +1,7 @@
  
 from Genome import DummyGenome
 from ListGenome import ListGenome
+import json
 
 genomeType = "list"
 def genomeFactory(parents):
@@ -80,7 +81,8 @@ class Ai:
         if command == "exit":
           running = False;
         elif command == "make": 
-          self.output("properties [" + ", ".join (self.make(int(args[0]))) + "]")
+          #self.output("properties [" + ", ".join (json.dumps(self.make(int(args[0])))) + "]")
+          self.output("properties  " + "  ".join ( self.make(int(args[0]) )) + " ")
         elif   command == "see":
           self.output("move" + self.see(args))
         elif command == "breed":
