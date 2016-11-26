@@ -1,0 +1,16 @@
+[
+{
+  "modid": "craftspring",
+  "name": "The Craft Spring",
+  "description": "Very cool craft spring mod",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["vrogojin@vrogojin.net","xozzslip@gmail.com","pietari.kokko@gmail.com"],
+  "credits": "Space Core",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
