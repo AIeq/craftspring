@@ -1,13 +1,18 @@
-    
+from Genome import Genome
+
 # Defining a class
 class Creature:
-  def __init__(self, x):
-        self.x = x
-  def move(self, input):
-    if(input == "b"):
-      return "f";
-    else:
-      return "r";
+  def __init__(self, genome):
+        self.genome = genome
+        
+  def __repr__(self):
+    return "Creature[" + str(self.genome)+"]" 
+    
+  def move(self, input):     
+    return self.genome.getMove(input)
+    
+  def properties(self):
+    return str(self.genome.getPhysicalProperties())
       
 class Ai:
   def __init__(self): 
@@ -24,6 +29,7 @@ class Ai:
   def run(self):
     running = True;  
     self.output("AI started, give commands")
+    parents = None;
     while(running):
       try:
         line = input().split(' ', 1)
@@ -35,20 +41,28 @@ class Ai:
 
         if command == "exit":
           running = False;
-        elif command == "make":
-          self.output("ok") 
-          self.creatures = []
+        elif command == "make": 
+          self.creatures = [] 
+          result = ""
           for count in range(int(args[0])):
-            x = Creature(3) 
-            self.creatures.append(x)
-        elif command == "move":
+            g = Genome(parents)
+            
+            c = Creature(g) 
+            self.creatures.append(c)  
+            result = result + " " + c.properties()
+          
+          self.output("properties" + result) 
+        elif   command == "see":
           result = ""
           for a, c in zip(args, self.creatures): 
             result = result + " " + c.move(a)
           
-          self.output("moving" + result)
+          self.output("move" + result)
+        elif command == "breed":
+          parents = [self.creatures[int(args[0])], self.creatures[int(args[1])]];
+          
         elif command == "print":
-          self.output("creatures " + str(self.creatures))
+          self.output(str(len(self.creatures))  + " creatures " + str(self.creatures))
         else :
           self.output("unknown command " + command)
       except Exception  as e:
@@ -56,5 +70,6 @@ class Ai:
 
 if __name__ == "__main__":
   Ai().run()
+  print("bye")
 
   
