@@ -441,18 +441,28 @@ public class PythonService {
 			moves[0]=args[0].replace("move", "");
 			for(int	i=1;i<args.length;i++)
 				moves[i]=args[i];
-			for(int	i=0;i<moves.length;i++)
+			for(int	i=0;i<args.length;i++)
 			{
 				EntityMinion	entity=null;
+				int	id=0;
 				synchronized(minions){
 					if(world==null){
 						System.err.println("WORLD IS NULL!!!");
 						return;
 					}
-					entity=(EntityMinion) world.getEntityByID(minions.get("minion_"+i));
+					System.out.println("minion_"+i);
+					id=minions.get("minion_"+i);
+					if(id==0)
+					{
+						System.err.println("ERROR: minion_"+i+" is not found!!!");
+					}
+					entity=(EntityMinion) world.
+							getEntityByID(id);
 				}
-				if(entity==null)
+				if(entity==null){
+					System.err.println("ERROR: minion with ID"+id+" is not found!!!");
 					continue;
+				}
 				if(moves[i].equalsIgnoreCase("left")){
 					entity.setPositionAndRotation(entity.posX, entity.posY, 
 							entity.posZ, (float) (entity.rotationYaw+Math.PI/2), entity.rotationPitch);
