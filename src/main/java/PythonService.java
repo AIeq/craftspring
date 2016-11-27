@@ -59,6 +59,8 @@ public class PythonService {
 					public void run() {
 						shutdown=false;
 						preparePythonScript("ListGenome.py");
+						preparePythonScript("MapGenome.py");
+						preparePythonScript("crossing.py");
 						preparePythonScript("Genome.py");
 						File	pyFile=preparePythonScript("AI.py");
 
