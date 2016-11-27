@@ -1,5 +1,7 @@
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelSheep1;
 import net.minecraft.client.model.ModelSilverfish;
+import net.minecraft.client.model.ModelWolf;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderSilverfish;
 import net.minecraft.client.renderer.entity.RenderWolf;
@@ -52,7 +54,8 @@ public class CraftSpring {
     			CraftSpring.instance, 64, 3, true,0xFF0000,0x00FF00);
 //    	new	RenderWolf(Minecraft.getMinecraft().getRenderManager(), null, 0);
     	RenderingRegistry.registerEntityRenderingHandler(EntityMinion.class, 
-    			new	RenderWolf(Minecraft.getMinecraft().getRenderManager(), new	ModelSilverfish(), 0.75F));
+    			new	RenderMinion(Minecraft.getMinecraft().getRenderManager(), 
+    					new	ModelSheep1(), 0.75F));
 //    	RenderingRegistry.registerEntityRenderingHandler(EntityMinion.class, 
 //    			new	RenderLiving(new	ModelSilverfish(),0.75F));
     }
