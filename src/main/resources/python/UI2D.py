@@ -8,18 +8,18 @@ import time
 import math
 import json
 level = [["gray", "gray", "gray", "gray", "gray", "gray"],
- ["gray", "white", "white", "white", "white", "gray"],
- ["green", "green", "red", "red", "green", "green"],
- ["red", "red", "red", "red", "red", "red"],
- ["gray", "white", "gray", "white", "white", "gray"],
- ["blue", "red", "red", "red", "red", "blue"],
- ["gray", "gray", "white", "white", "gray", "gray"],
- ["gray", "white", "gray", "white", "white", "gray"],
- ["gray", "white", "white", "white", "gray", "gray"],
- ["gray", "white", "white", "gray", "white", "gray"],
- ["gray", "white", "white", "gray", "gray", "gray"],
- ["gray", "white", "gray", "white", "white", "gray"],
- ["gray", "gray", "white", "white", "white", "gray"],
+ ["gray", "gray", "gray", "gray", "gray", "gray"],
+ ["gray", "gray", "red", "red", "gray", "gray"],
+ ["gray", "gray", "red", "red", "gray", "gray"],
+ ["gray", "gray", "gray", "gray", "gray", "gray"],
+ ["blue", "gray", "gray", "gray", "gray", "blue"],
+ ["gray", "gray", "gray", "gray", "gray", "gray"],
+ ["gray", "gray", "gray", "gray", "gray", "gray"],
+ ["gray", "gray", "gray", "gray", "gray", "gray"],
+ ["gray", "gray", "gray", "gray", "gray", "gray"],
+ ["gray", "gray", "gray", "gray", "gray", "gray"],
+ ["gray", "gray", "gray", "gray", "gray", "gray"],
+ ["gray", "gray", "gray", "gray", "gray", "gray"],
  ["gray", "gray", "gray", "gray", "gray", "gray"]
 ]
 ai = Ai()
@@ -96,33 +96,41 @@ class Minion():
          
         self.head.move( hx, hy)
         
-  def collision(self, other):
-        h = 20 +len(level)*40
+  def collision(self, other): 
         c =  math.hypot(other.x - self.x, other.y - self.y) < self.size + other.size
         if c:
           self.dx = (self.x - other.x)/4
           self.dy = (self.y - other.y)/4
-          return True
+ 
+        return c
+  def collisionObs(self, obs): 
+        c =  math.hypot(obs.getX() - self.x, obs.getY()  - self.y) < self.size + 12
+        if c:
+          self.dx = (self.x - obs.getX())/2
+          self.dy = (self.y - obs.getY())/2
+ 
+        return c
+  def collisionWall(self):
+        h = 20 +len(level)*40
+ 
         if self.x < 80:
           self.dx = 80- self.x
-          c =   True
+          return   True
         if self.y < 60:
           self.dy = 60- self.y
-          c =   True
+          return  True
         if self.x > 280:
           self.dx = 280 - self.x
-          c =   True
+          return  True
         if self.y > h:
           self.dy = h - self.y
-          c =   True
-        return c
+          return   True
+        return False
   def allign(self):
         self.moveXY(self.dx,self.dy)
         self.dx = 0;
         self.dy = 0;
-  def sees(self):
-        vx = self.x+2*self.size * math.cos(self.angle)
-        vy = self.y+2*self.size * math.sin(self.angle)
+  def getBlcok(self,vx,vy):
         i =  int((vx-60) / 40) 
         j =  int((vy-40) / 40)
         if  i < 0:
@@ -137,13 +145,17 @@ class Minion():
         if s== "gray":
           s = "none" 
         return s;
+  def sees(self):
+        vx = self.x+2*self.size * math.cos(self.angle)
+        vy = self.y+2*self.size * math.sin(self.angle)
+        return self.getBlcok(vx, vy);
 
   def select(self, point):
         sel =  math.hypot(point.getX() - self.x, point.getY() - self.y) < self.size
 
         return sel
         
-           
+obstacles = []      
      
 def main():
     win = GraphWin('game', 380, 640) # give title and dimensions
@@ -160,7 +172,12 @@ def main():
         for x,c in enumerate(line):
           xx = 60+40 *x
           yy = 40+40 *y
-          box = Rectangle(Point(xx, yy), Point(xx+40, yy+40)) # set corners of  
+          box = Rectangle(Point(xx, yy), Point(xx+40, yy+40)) # set corners of
+          if c != "gray" :
+            obstacles.append(Point(xx+10, yy+10))
+            obstacles.append(Point(xx+30, yy+10))
+            obstacles.append(Point(xx+10, yy+30))
+            obstacles.append(Point(xx+30, yy+30))
           box.setFill(c)
           box.draw(win)
     props = ai.make(10)
@@ -184,8 +201,8 @@ def main():
             direction = 1
         if act == "right":
             direction = -1
-        
-        #move =  random.randint(-1, 1)
+        if random.randint(0, 19) == 0:
+            direction =  random.randint(-1, 1)
         m.turn(direction);
         if direction == 0:
           m.move()
@@ -201,6 +218,13 @@ def main():
               #print(c)
               if c:
                 collision = True
+          for o in obstacles: 
+              c = m.collisionObs(o) 
+              if c:
+                collision = True
+          c = m.collisionWall()
+          if c:
+                collision = True     
         for m in minions: 
           m.allign()
 

@@ -1,9 +1,10 @@
  
 from Genome import DummyGenome
 from ListGenome import ListGenome
+from MapGenome import MapGenome
 import json
 
-genomeType = "list"
+genomeType = "map"
 def genomeFactory(parents):
   if genomeType is "dummy":
     return DummyGenome(parents);
