@@ -85,7 +85,7 @@ class Ai:
           #self.output("properties [" + ", ".join (json.dumps(self.make(int(args[0])))) + "]")
           self.output("properties  " + " ".join ( self.make(int(args[0]) )) + " ")
         elif   command == "see":
-          self.output("move" + "  ".join ( self.see(args)))
+          self.output("move " + "  ".join ( self.see(args)))
         elif command == "breed":
           self.breed( int(args[0])  ,  int(args[1]) );
           
