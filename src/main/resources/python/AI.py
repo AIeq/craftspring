@@ -4,7 +4,7 @@ from ListGenome import ListGenome
 from MapGenome import MapGenome
 import json
 
-genomeType = "map"
+genomeType = "list"
 def genomeFactory(parents):
   if genomeType is "dummy":
     return DummyGenome(parents);
