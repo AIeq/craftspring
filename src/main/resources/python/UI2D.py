@@ -9,7 +9,7 @@ import math
 import json
 level = [["gray", "gray", "gray", "gray", "gray", "gray"],
  ["gray", "white", "white", "white", "white", "gray"],
- ["gray", "white", "white", "white", "white", "gray"],
+ ["green", "green", "red", "red", "green", "green"],
  ["red", "red", "red", "red", "red", "red"],
  ["gray", "white", "gray", "white", "white", "gray"],
  ["blue", "red", "red", "red", "red", "blue"],
@@ -58,6 +58,17 @@ class Minion():
   def moveXY(self,x,y):  
         self.x +=x
         self.y +=y
+        
+  def moveToXY(self,x,y):  
+        self.x =x
+        self.y =y
+        
+  def reColor(self,c):
+    self.color = c
+    self.body.setFill(self.color)
+    self.head.setFill(self.color) 
+        
+        
 
   def update(self):
         x = self.x-self.oldx
@@ -70,8 +81,8 @@ class Minion():
         self.oldy = self.y;
         
   def move(self):  
-        x = 2*self.size * math.cos(self.angle)
-        y = 2*self.size * math.sin(self.angle)
+        x = 1*self.size * math.cos(self.angle)
+        y = 1*self.size * math.sin(self.angle)
         self.moveXY( x, y)
         
   def turn(self, a):   
@@ -86,6 +97,7 @@ class Minion():
         self.head.move( hx, hy)
         
   def collision(self, other):
+        h = 20 +len(level)*40
         c =  math.hypot(other.x - self.x, other.y - self.y) < self.size + other.size
         if c:
           self.dx = (self.x - other.x)/4
@@ -100,8 +112,8 @@ class Minion():
         if self.x > 280:
           self.dx = 280 - self.x
           c =   True
-        if self.y > 580:
-          self.dy = 580 - self.y
+        if self.y > h:
+          self.dy = h - self.y
           c =   True
         return c
   def allign(self):
@@ -125,6 +137,12 @@ class Minion():
         if s== "gray":
           s = "none" 
         return s;
+
+  def select(self, point):
+        sel =  math.hypot(point.getX() - self.x, point.getY() - self.y) < self.size
+
+        return sel
+        
            
      
 def main():
@@ -151,6 +169,8 @@ def main():
     for i, p in enumerate(props):
       minions.append(Minion( i ,p, random.randint(56, 250), random.randint(500, 600),win)) 
      
+    selectedParent = None
+    animatioCounter = 0
     while(True):
       sees =[]
       for m in minions:
@@ -171,7 +191,7 @@ def main():
           m.move()
       collision = True
       tries = 0;
-      while collision and tries < 10000: 
+      while collision and tries < 100: 
         collision = False
         tries += 1
         for m in minions: 
@@ -186,11 +206,31 @@ def main():
 
       for m in minions:
         m.update()
-      time.sleep(.2)
+      time.sleep(.1)
       #print("----")
-      #head = Circle(win.getMouse(), 5) # set center and radius
-      #head.setFill("yellow")
-      #head.draw(win) 
+      if animatioCounter >= 10:
+        animatioCounter = 0
+        point  = win.getMouse()
+        selected = None
+        for i, m in enumerate(minions):
+          if m.select(point):
+            selected = i
+        if selected is not None:
+          if selectedParent is None:
+            selectedParent = selected
+            print("sel " + str(selectedParent))
+          else:
+            print("breeding " + str(selectedParent) +"  "+ str(selected))
+            ai.breed(selectedParent, selected) 
+            props = ai.make(10)
+            selectedParent = None
+
+            for m, p in zip(minions, props):
+              m.moveToXY(random.randint(56, 250), random.randint(500, 600))
+              m.allign()
+              m.reColor(p)
+      else:
+        animatioCounter +=1
       win.flush() 
     win.close()
     
