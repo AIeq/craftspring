@@ -1,7 +1,9 @@
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 
 public class CraftSpringCommand extends CommandBase {
 
@@ -39,6 +41,21 @@ public class CraftSpringCommand extends CommandBase {
 					command=command+" "+args[i];
 				PythonService.addCommandToQueue(command);
 			}
+		}
+		if(args[0].equalsIgnoreCase("breed"))
+		{
+			PythonService.addCommandToQueue("command breed "+args[1]+" "+args[2]);
+			World	world=Minecraft.getMinecraft().getIntegratedServer().getEntityWorld();
+			if(PythonService.minions==null)
+				return;
+			for(String	name:PythonService.minions.keySet())
+			{
+				EntityMinion	entity=(EntityMinion) world.getEntityByID(PythonService.minions.get(name));
+				if(entity==null)
+					continue;
+				entity.setDead();
+			}
+			PythonService.addCommandToQueue("command make "+PythonService.pSize);
 		}
 	}
 

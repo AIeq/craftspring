@@ -21,6 +21,7 @@ public class EntityMinion extends EntitySheep {
 		this.setNoAI(true);
 		this.tasks.taskEntries.clear();
 		this.targetTasks.taskEntries.clear();
+		this.moveForward=this.moveForward/4;
 	}
 
 	public	void	setColor(Color	color)
