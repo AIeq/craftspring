@@ -44,18 +44,18 @@ public class CraftSpringCommand extends CommandBase {
 		}
 		if(args[0].equalsIgnoreCase("breed"))
 		{
-			PythonService.addCommandToQueue("command breed "+args[1]+" "+args[2]);
+			PythonService.addCommandToQueue("breed "+args[1]+" "+args[2]);
 			World	world=Minecraft.getMinecraft().getIntegratedServer().getEntityWorld();
-			if(PythonService.minions==null)
-				return;
-			for(String	name:PythonService.minions.keySet())
-			{
-				EntityMinion	entity=(EntityMinion) world.getEntityByID(PythonService.minions.get(name));
-				if(entity==null)
-					continue;
-				entity.setDead();
-			}
-			PythonService.addCommandToQueue("command make "+PythonService.pSize);
+			if(PythonService.minions!=null)
+				for(String	name:PythonService.minions.keySet())
+				{
+					EntityMinion	entity=(EntityMinion) world.getEntityByID(PythonService.minions.get(name));
+					if(entity==null)
+						continue;
+					entity.setDead();
+				}
+			System.out.println("command make "+PythonService.pSize);
+			PythonService.addCommandToQueue("make "+PythonService.pSize);
 		}
 	}
 

@@ -390,9 +390,9 @@ public class PythonService {
 	
 	protected	static	void	interpret(String	line)
 	{
-		displayToChat("\247a"+line);
+		displayToChat("\247a"+line+"+++");
 		String[]	args=line.replace("\t", " ").split("\\s");
-		
+//		displayToChat("\247a"+line.replace("\t", " ")+"+++");
 		if(args[0].equalsIgnoreCase("properties"))
 		{
 			int	j=0;
@@ -441,8 +441,12 @@ public class PythonService {
 			moves[0]=args[0].replace("move", "");
 			for(int	i=1;i<args.length;i++)
 				moves[i]=args[i];
+			System.out.println("ARG.LENGTH: "+args.length);
+			int	j=0;
 			for(int	i=0;i<args.length;i++)
 			{
+				if(moves[i].length()==0)
+					continue;
 				EntityMinion	entity=null;
 				int	id=0;
 				synchronized(minions){
@@ -450,15 +454,16 @@ public class PythonService {
 						System.err.println("WORLD IS NULL!!!");
 						return;
 					}
-					System.out.println("minion_"+i);
-					id=minions.get("minion_"+i);
+					System.out.println("minion_"+j);
+					id=minions.get("minion_"+j);
 					if(id==0)
 					{
-						System.err.println("ERROR: minion_"+i+" is not found!!!");
+						System.err.println("ERROR: minion_"+j+" is not found!!!");
 					}
 					entity=(EntityMinion) world.
 							getEntityByID(id);
 				}
+				j++;
 				if(entity==null){
 					System.err.println("ERROR: minion with ID"+id+" is not found!!!");
 					continue;
