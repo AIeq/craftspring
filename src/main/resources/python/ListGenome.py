@@ -13,7 +13,7 @@ class ListGenome(Genome):
               self.genes.append( self.genes.append(random.choice(possibleGenes)))
         else:
           self.genes = []
-          for a,b in zip(parents[0], parents[1]): 
+          for a,b in zip(parents[0].genes, parents[1].genes): 
             self.genes.append( random.choice([a,b]) )
         
   def getMove(self, input): # color

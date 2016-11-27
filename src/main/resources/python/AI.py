@@ -87,6 +87,7 @@ class Ai:
         elif   command == "see":
           self.output("move " + "  ".join ( self.see(args)))
         elif command == "breed":
+          # print(args[0])
           self.breed( int(args[0])  ,  int(args[1]) );
           
         elif command == "print":
