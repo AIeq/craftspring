@@ -40,7 +40,7 @@ public class PythonService {
 	protected	static	LinkedList<String>	queue;
 	
 	protected	static	int	pSize=10;
-	protected	static	Hashtable<String,Integer>	minions=null;
+	public	static	Hashtable<String,Integer>	minions=null;
 	
 	protected static	World	world=null;
 	
@@ -236,15 +236,18 @@ public class PythonService {
 		
 		int	i=0;
 		while(!shutdown){
+			System.out.println("L1");
 			String line=null;
 			try {
 				while((line = in.readLine())!=null){
 					interpret(line);
+					System.out.println("L2: "+line);
 				}
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			System.out.println("L3");
 			Thread.currentThread();
 			try {
 				Thread.sleep(55);
@@ -387,9 +390,9 @@ public class PythonService {
 	
 	protected	static	void	interpret(String	line)
 	{
-		displayToChat("\247a"+line);
+		displayToChat("\247a"+line+"+++");
 		String[]	args=line.replace("\t", " ").split("\\s");
-		
+//		displayToChat("\247a"+line.replace("\t", " ")+"+++");
 		if(args[0].equalsIgnoreCase("properties"))
 		{
 			int	j=0;
@@ -430,6 +433,61 @@ public class PythonService {
 			}
 			pSize=j;
 		}
+		if(args[0].startsWith("move"))
+		{
+			if(minions==null)
+				return;
+			String[]	moves=new	String[args.length];
+			moves[0]=args[0].replace("move", "");
+			for(int	i=1;i<args.length;i++)
+				moves[i]=args[i];
+			System.out.println("ARG.LENGTH: "+args.length);
+			int	j=0;
+			for(int	i=0;i<args.length;i++)
+			{
+				if(moves[i].length()==0)
+					continue;
+				EntityMinion	entity=null;
+				int	id=0;
+				synchronized(minions){
+					if(world==null){
+						System.err.println("WORLD IS NULL!!!");
+						return;
+					}
+					System.out.println("minion_"+j);
+					id=minions.get("minion_"+j);
+					if(id==0)
+					{
+						System.err.println("ERROR: minion_"+j+" is not found!!!");
+					}
+					entity=(EntityMinion) world.
+							getEntityByID(id);
+				}
+				j++;
+				if(entity==null){
+					System.err.println("ERROR: minion with ID"+id+" is not found!!!");
+					continue;
+				}
+				if(moves[i].equalsIgnoreCase("left")){
+					entity.setPositionAndRotation(entity.posX, entity.posY, 
+							entity.posZ, (float) (entity.rotationYaw+Math.PI/2), entity.rotationPitch);
+					moves[i]="forward";
+				}
+				if(moves[i].equalsIgnoreCase("right")){
+					entity.setPositionAndRotation(entity.posX, entity.posY, 
+							entity.posZ, (float) (entity.rotationYaw-Math.PI/2), entity.rotationPitch);
+					moves[i]="forward";
+				}
+				if(moves[i].equalsIgnoreCase("forward")){
+					BlockPos	pos=getBlockPosInfront(entity);
+					if(pos!=null)
+						//entity.moveEntity(((float)(pos.getX()-entity.posX+0.5))/(entity.moveForward*2.0),0,((float)(pos.getZ()-entity.posZ+0.5))/(entity.moveForward*2.0));
+						entity.moveEntity(((float)(pos.getX()-entity.posX+0.5)),0,
+								((float)(pos.getZ()-entity.posZ+0.5)));
+				}
+				
+			}
+		}
 	}
 	
 	protected	static	void	interpretError(String	line)
@@ -454,35 +512,7 @@ public class PythonService {
 		EntityMinion	entity=(EntityMinion) world.getEntityByID(minions.get(name));
 		if(entity==null)
 			return	"none";
-		EnumFacing	facing=entity.getAdjustedHorizontalFacing();
-		BlockPos	pos=null;
-		int	i=0;
-		switch(facing){
-		case	EAST:do{
-				pos=new	BlockPos(entity.posX+i,entity.posY,entity.posZ);
-//				System.out.println("E");
-				i++;
-			}while((world.getBlockState(pos).getBlock().getUnlocalizedName().equalsIgnoreCase("tile.air"))&&(i<3));
-			break;
-		case	WEST:do{
-				pos=new	BlockPos(entity.posX-i,entity.posY,entity.posZ);
-//				System.out.println("W");
-				i++;
-		}while((world.getBlockState(pos).getBlock().getUnlocalizedName().equalsIgnoreCase("tile.air"))&&(i<3));
-			break;
-		case	NORTH:do{
-				pos=new	BlockPos(entity.posX,entity.posY,entity.posZ-i);
-//				System.out.println("N");
-				i++;
-		}while((world.getBlockState(pos).getBlock().getUnlocalizedName().equalsIgnoreCase("tile.air"))&&(i<3));
-			break;
-		case	SOUTH:do{
-				pos=new	BlockPos(entity.posX,entity.posY,entity.posZ+i);
-//				System.out.println("S");
-				i++;
-		}while((world.getBlockState(pos).getBlock().getUnlocalizedName().equalsIgnoreCase("tile.air"))&&(i<3));
-			break;
-		}
+		BlockPos	pos=getBlockPosInfront(entity);
 		if(pos!=null){
 //			System.out.println("X: "+entity.posX+", "+"Y: "+entity.posY+", "+"Z: "+entity.posZ);
 			return	senseBlock(pos,world);
@@ -509,5 +539,39 @@ public class PythonService {
 			System.out.println("NO COLOR!!!");
 		}
 		return	"none";
+	}
+	
+	protected	static	BlockPos	getBlockPosInfront(EntityMinion	entity)
+	{
+		EnumFacing	facing=entity.getHorizontalFacing();
+		BlockPos	pos=null;
+		int	i=0;
+		switch(facing){
+		case	EAST:do{
+				pos=new	BlockPos(entity.posX+i,entity.posY,entity.posZ);
+//				System.out.println("E");
+				i++;
+			}while((world.getBlockState(pos).getBlock().getUnlocalizedName().equalsIgnoreCase("tile.air"))&&(i<2));
+			break;
+		case	WEST:do{
+				pos=new	BlockPos(entity.posX-i,entity.posY,entity.posZ);
+//				System.out.println("W");
+				i++;
+		}while((world.getBlockState(pos).getBlock().getUnlocalizedName().equalsIgnoreCase("tile.air"))&&(i<2));
+			break;
+		case	NORTH:do{
+				pos=new	BlockPos(entity.posX,entity.posY,entity.posZ-i);
+//				System.out.println("N");
+				i++;
+		}while((world.getBlockState(pos).getBlock().getUnlocalizedName().equalsIgnoreCase("tile.air"))&&(i<2));
+			break;
+		case	SOUTH:do{
+				pos=new	BlockPos(entity.posX,entity.posY,entity.posZ+i);
+//				System.out.println("S");
+				i++;
+		}while((world.getBlockState(pos).getBlock().getUnlocalizedName().equalsIgnoreCase("tile.air"))&&(i<2));
+			break;
+		}
+		return pos;
 	}
 }
